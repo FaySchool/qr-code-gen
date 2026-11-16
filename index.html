@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>QR Code Generator</title>
+  <meta name="description" content="Create custom QR codes for links, WiFi, contacts, events and more. Runs entirely in your browser.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='%233451b2' d='M1 1h6v6H1zm2 2v2h2V3zm6-2h6v6H9zm2 2v2h2V3zM1 9h6v6H1zm2 2v2h2v-2zm6-2h2v2H9zm4 0h2v2h-2zm-2 2h2v2h-2zm2 2h2v2h-2zm-4 0h2v2H9z'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <h1>QR Code Generator</h1>
+    <p>Pick what the code should do, style it, and download it.</p>
+  </header>
+
+  <main class="layout">
+    <div class="controls">
+      <section class="card" aria-labelledby="content-heading">
+        <h2 id="content-heading">Content</h2>
+        <div class="chips" id="type-chips" role="radiogroup" aria-label="Content type"></div>
+        <p class="hint" id="type-hint"></p>
+        <form class="fields" id="fields" autocomplete="off" novalidate></form>
+      </section>
+
+      <section class="card" aria-labelledby="design-heading">
+        <div class="card-head">
+          <h2 id="design-heading">Design</h2>
+          <button type="button" class="link-btn" id="reset-design">Reset</button>
+        </div>
+
+        <h3>Shape</h3>
+        <div class="row">
+          <span class="row-label" id="lbl-shape">Outline</span>
+          <div class="chips" data-chips="shape" role="radiogroup" aria-labelledby="lbl-shape"></div>
+        </div>
+        <div class="row">
+          <span class="row-label" id="lbl-dots">Dots</span>
+          <div class="chips" data-chips="dots" role="radiogroup" aria-labelledby="lbl-dots"></div>
+        </div>
+        <div class="row">
+          <span class="row-label" id="lbl-csq">Corner frames</span>
+          <div class="chips" data-chips="cornerSq" role="radiogroup" aria-labelledby="lbl-csq"></div>
+        </div>
+        <div class="row">
+          <span class="row-label" id="lbl-cdot">Corner centers</span>
+          <div class="chips" data-chips="cornerDot" role="radiogroup" aria-labelledby="lbl-cdot"></div>
+        </div>
+
+        <h3>Color</h3>
+        <div class="row">
+          <label class="row-label" for="fg">Dots</label>
+          <div class="inline">
+            <input type="color" id="fg" data-key="fg">
+            <label class="check"><input type="checkbox" data-key="gradient"> Gradient</label>
+          </div>
+        </div>
+        <div class="row" data-show-if="gradient">
+          <label class="row-label" for="fg2">Gradient to</label>
+          <div class="inline">
+            <input type="color" id="fg2" data-key="fg2">
+            <select data-key="gradType" aria-label="Gradient type">
+              <option value="linear">Linear</option>
+              <option value="radial">Radial</option>
+            </select>
+            <label class="inline grow" data-show-if="gradLinear">
+              <span class="sr-only">Gradient angle</span>
+              <input type="range" min="0" max="360" step="15" data-key="gradRot">
+              <output data-for="gradRot" data-suffix="°"></output>
+            </label>
+          </div>
+        </div>
+        <div class="row">
+          <label class="row-label" for="bg">Background</label>
+          <div class="inline">
+            <input type="color" id="bg" data-key="bg">
+            <label class="check"><input type="checkbox" data-key="transparent"> Transparent</label>
+          </div>
+        </div>
+        <div class="row">
+          <span class="row-label">Corners</span>
+          <div class="inline">
+            <label class="check"><input type="checkbox" data-key="customCorners"> Different color</label>
+            <span class="inline" data-show-if="customCorners">
+              <label class="swatch">Frame <input type="color" data-key="cornerSqColor"></label>
+              <label class="swatch">Center <input type="color" data-key="cornerDotColor"></label>
+            </span>
+          </div>
+        </div>
+
+        <h3>Logo</h3>
+        <div class="row">
+          <span class="row-label">Image</span>
+          <div class="inline">
+            <label class="btn btn-small">
+              <span id="logo-btn-text">Choose image…</span>
+              <input type="file" id="logo-file" accept="image/*" class="sr-only">
+            </label>
+            <span class="logo-name" id="logo-name"></span>
+            <button type="button" class="link-btn" id="logo-remove" hidden>Remove</button>
+          </div>
+        </div>
+        <div data-show-if="logo">
+          <div class="row">
+            <label class="row-label" for="logoSize">Logo size</label>
+            <div class="inline">
+              <input type="range" id="logoSize" min="10" max="50" step="1" data-key="logoSize">
+              <output data-for="logoSize" data-suffix="%"></output>
+            </div>
+          </div>
+          <div class="row">
+            <label class="row-label" for="logoMargin">Space around</label>
+            <div class="inline">
+              <input type="range" id="logoMargin" min="0" max="4" step="0.5" data-key="logoMargin">
+              <output data-for="logoMargin" data-suffix="%"></output>
+            </div>
+          </div>
+          <div class="row">
+            <span class="row-label"></span>
+            <label class="check"><input type="checkbox" data-key="logoHide"> Clear the dots behind the logo</label>
+          </div>
+        </div>
+
+        <h3>Size</h3>
+        <div class="row">
+          <label class="row-label" for="size">Image size</label>
+          <div class="inline">
+            <input type="range" id="size" min="128" max="2048" step="32" data-key="size">
+            <output data-for="size" data-suffix=" px"></output>
+          </div>
+        </div>
+        <div class="row">
+          <label class="row-label" for="marginPct">Margin</label>
+          <div class="inline">
+            <input type="range" id="marginPct" min="0" max="12" step="1" data-key="marginPct">
+            <output data-for="marginPct" data-suffix="%"></output>
+          </div>
+        </div>
+        <div class="row">
+          <label class="row-label" for="ec">Error correction</label>
+          <select id="ec" data-key="ec">
+            <option value="L">Low — 7% (smallest code)</option>
+            <option value="M">Medium — 15%</option>
+            <option value="Q">Quartile — 25%</option>
+            <option value="H">High — 30% (best with a logo)</option>
+          </select>
+        </div>
+      </section>
+    </div>
+
+    <aside class="preview-col" aria-label="Preview and download">
+      <div class="card preview-card">
+        <div class="preview" id="preview" aria-live="polite"></div>
+        <p class="status" id="status"></p>
+        <ul class="warnings" id="warnings"></ul>
+
+        <div class="downloads">
+          <button type="button" class="btn btn-primary" data-download="png">Download PNG</button>
+          <button type="button" class="btn" data-download="svg">SVG</button>
+          <button type="button" class="btn" data-download="jpeg">JPEG</button>
+          <button type="button" class="btn" data-download="webp">WebP</button>
+          <button type="button" class="btn" id="copy">Copy image</button>
+        </div>
+
+        <details class="raw">
+          <summary>Encoded data <span id="raw-count"></span></summary>
+          <pre id="raw"></pre>
+        </details>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="site-footer">
+    <p>Codes are generated in your browser. Nothing you type or upload leaves this device.</p>
+  </footer>
+
+  <script src="vendor/qr-code-styling.js"></script>
+  <script src="js/payloads.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
